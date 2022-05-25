@@ -1,4 +1,4 @@
-name: DataParser: build-test
+name: DataParser
 
 on:
   push:
