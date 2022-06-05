@@ -1,0 +1,29 @@
+name: Flaskserver
+
+on:
+  issues:
+    types:
+      - labeled
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: install-python-libs
+        run: pip install -r FlaskCalculator/requirements.txt
+      - name: run-unit-tests
+        run: python FlaskCalculator/calculator/test_calculator.py
+      - name: run-flask-server
+        run: python FlaskCalculator/app.py &
+      - name: ping-test
+        run: python FlaskCalculator/utility/ping_test.py
+      - name: docker-build
+        run: docker build FlaskCalculator/ --file Dockerfile --tag flask-calculator:latest
+      - name: docker-hub-login
+        run: docker login --username=bardzic99
+      - name: docker-hub-tag
+        run: docker tag flask-calculator:latest bardzic99/flask-calculator:1.0
+      - name: docker-hub-push
+        run: docker push bardzic99/flask-calculator:1.0 
+      
