@@ -1,37 +1,38 @@
-name: DataParser
+name: DataParser: build-test
 
 on:
-    push:
-        branches: [ main ]
-    pull_request:
-        branches: [ main ]
-
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+    
 jobs:
     build-and-test:
         runs-on: ubuntu-latest
-    steps:
-        - uses: actions/checkout@v2
-        - name: Install-Qt
-          uses: jurplel/install-qt-action@v2
-        - name: create-build-dir
-          run: mkdir build
-        - name: build-qmake
-          working-directory: ./build
-          run: qmake -o Makefile ..
-        - name: run-test
-          working-directory: ./build
-          run: make
-        - name: run-test
-          working-directory: ./build
-          run: ./ParserTest/ParserTest
-        - name: zip-app
-          run: zip -r dataviewer.zip build/DataViewer/DataViewer
-        - name: deploy-app
-          uses: appleboy/scp-action@master
-          with: 
-            host: localhost
-            username: BojanBardzic
-            password: nesto
-            port: 22
-            source: DataViewer
-            target: DataViewer
+
+        steps:
+            - uses: actions/checkout@v2 # Preuzimanje svih datoteka sa repozitorijuma (akcija)
+            - name: Install Qt # Instalacija qmake alata 
+                uses: jurplel/install-qt-action@v2
+            - name: create-build-dir # Kreiranje direktorijuma za build
+                run: mkdir build
+            - name: build-qmake # Generisanje Makefile-a na osnovu qmake datoteke
+                working-directory: ./build
+                run: qmake -o Makefile ..
+            - name: build-make # Generisanje izvrsnih datoteka
+                working-directory: ./build
+                run: make
+            - name: run-test # Pokretanje testova
+                working-directory: ./build
+                run: ./ParserTest/ParserTest
+            - name: zip-app # Zipovanje aplikacije
+              run: zip -r dataviewer.zip build/DataViewer/DataViewer
+            - name: deploy-app # Isporucivanje aplikacije - vrednosti ostaju nepopunjene
+              uses: appleboy/scp-action@master
+              with:
+                  host: *
+                  username: *
+                  password: *
+                  port: 22
+                  source: *
+                  target: *
